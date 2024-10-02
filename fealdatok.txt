@@ -1,0 +1,5 @@
+FEladatok megoldása
+-----------------------------
+index.php a html és a php egy lapon található
+
+

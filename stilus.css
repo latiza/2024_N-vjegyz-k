@@ -1,0 +1,66 @@
+body {
+    font-size: 11px;
+    font-family: Georgia;
+    background-color: darkgrey;
+}
+
+.container {
+    width: 1300px;
+    margin: auto;
+}
+
+article {
+    float: left;
+    width: 370px;
+    height: 150px;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: grey;
+    border: solid 2px black;
+}
+
+article img {
+    float: left;
+    margin-right: 10px;
+    border-radius: 10px;
+    width: 120px;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+table {
+    margin-top: 20px;
+    border: solid 2px black;
+    border-collapse: collapse;
+}
+
+tr:nth-child(2n) {
+    background-color: #ddd;
+}
+
+tr:nth-child(2n+1) {
+    background-color: #bbb;
+}
+
+th {
+    background-color: #f00;
+}
+
+th,
+td {
+    padding: 5px;
+    border: solid 1px black;
+}
+
+td img {
+    width: 50px;
+}

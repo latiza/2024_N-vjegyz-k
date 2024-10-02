@@ -1,0 +1,18 @@
+1. Specifikáció
+---------------
+Névjegykártya tároló alkalmazás. Ismerősök adatait névjegykártya szerűen jeleníti meg. Megjelenítendő adatok: név, cégnév, tel, e-mail, később fotó. Keresés funkció minden adatban keres.
+Később szeretném rendezhetővé tenni a megadott adatok alapján.
+
+2. HTML tartalmi sablon
+-----------------------
+
+3. CSS megjelenés
+-----------------
+
+4. Adatbázis tervezése
+----------------------
+id
+nev
+cegnev
+mobil
+email

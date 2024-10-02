@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hu" ng-app="nevjegyekApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Névjegykártyák</title>
+    <link href="stilus.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        .pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.pagination button {
+    background-color: #727a83;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+    </style>
+</head>
+<body ng-controller="NevjegyekController">
+    <h1>Névjegykártyák</h1>
+    <!-- Lapozó -->
+    <div class="pagination">
+        <button ng-disabled="currentPage == 1" ng-click="currentPage = 1">Első</button>
+        <button ng-disabled="currentPage == 1" ng-click="currentPage = currentPage - 1">Előző</button>
+        
+        <span>{{currentPage}} / {{numberOfPages()}}</span>
+        
+        <button ng-disabled="currentPage == numberOfPages()" ng-click="currentPage = currentPage + 1">Következő</button>
+        <button ng-disabled="currentPage == numberOfPages()" ng-click="currentPage = numberOfPages()">Utolsó</button>
+    </div>
+    <div class="container">
+        <!-- Névjegyek megjelenítése lapozóval -->
+        <article ng-repeat="nevjegy in nevjegyek | startFrom: (currentPage-1) * itemsPerPage | limitTo: itemsPerPage">
+            <img ng-src="kepek/{{nevjegy.foto}}" alt="{{nevjegy.nev}}">
+            <h2>{{nevjegy.nev}}</h2>
+            <h3>{{nevjegy.cegnev}}</h3>
+            <p>Mobil: <a ng-href="tel:{{nevjegy.mobil}}">{{nevjegy.mobil}}</a></p>
+            <p>E-mail: <a ng-href="mailto:{{nevjegy.email}}">{{nevjegy.email}}</a></p>
+        </article>
+    </div>
+
+    <script>
+        const app = angular.module('nevjegyekApp', []);
+        
+        // Egyedi szűrő a lapozáshoz
+        app.filter('startFrom', function() {
+            return function(input, start) {
+                start = +start; // Átalakítás számmá
+                return input.slice(start);
+            }
+        });
+
+        app.controller('NevjegyekController', ['$scope', '$http', function($scope, $http) {
+            // Adatok betöltése PHP API-ról
+            $http.get('vegpont.php').then(function(response) {
+                $scope.nevjegyek = response.data;
+                $scope.itemsPerPage = 9; // 9 elem megjelenítése oldalanként
+                $scope.currentPage = 1;  // Kezdő oldal
+            }, function(error) {
+                console.error('Hiba történt az adatok lekérése közben:', error);
+            });
+
+            // Oldalak számítása
+            $scope.numberOfPages = function() {
+                return Math.ceil($scope.nevjegyek.length / $scope.itemsPerPage);
+            };
+        }]);
+    </script>
+</body>
+</html>
