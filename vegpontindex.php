@@ -1,6 +1,6 @@
 <?php
 // JSON fájl beolvasása
-$json_data = file_get_contents('http://localhost/2024_2025_php_feladatok/2024_2025%20nevjegyek/vegpont.php');
+$json_data = file_get_contents('vegpont.php');
 require "kapcsolat.php";
 require "lapozo.php";
 // JSON adatok dekódolása

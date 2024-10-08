@@ -4,7 +4,8 @@ require("kapcsolat.php");
 /* Beállítások */
 //$kifejezes = isset($_GET['kifejezes']) ? $_GET['kifejezes'] : "";
 /*Tanuljuk meg Elvis rövidebb alakját: A ?? operátor ellenőrzi, hogy a bal oldali érték létezik-e és nem null. Ha létezik, akkor azt az értéket adja vissza, különben a jobb oldalon megadott alapértelmezett értéket (ebben az esetben egy üres stringet) adja vissza.*/
-$kifejezes = $_GET['kifejezes'] ?? "";
+$kifejezes = $_GET['kifejezes'] ?? "";    
+
 //var_dump($kifejezes);
 $mennyit = isset($_GET['mennyit']) ? (int)$_GET['mennyit'] : 9; // Alapértelmezésként 9 elem
 $sql = "SELECT *

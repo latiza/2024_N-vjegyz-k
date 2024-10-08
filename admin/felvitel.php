@@ -8,22 +8,33 @@ if (!isset($_SESSION['belepett'])) {
 if (isset($_POST['rendben'])) {
 
 	// Változók tisztítása
-	$nev    = strip_tags(ucwords(strtolower(trim($_POST['nev']))));
+	$nev    = htmlspecialchars(strip_tags(ucwords(strtolower(trim($_POST['nev'])))));
 	$cegnev = strip_tags(trim($_POST['cegnev']));
 	$mobil  = strip_tags(trim($_POST['mobil']));
 	$email  = strip_tags(strtolower(trim($_POST['email'])));
 
 	// Változók vizsgálata
-	$mime = array("image/jpeg", "image/pjpeg", "image/gif", "image/png");
+	$mime = ["image/jpeg", "image/pjpeg", "image/gif", "image/png"];
 	
-	if (empty($nev))
+	if (empty($nev)) {
 		$hibak[] = "Nem adtál meg nevet!";
-	elseif (strlen($nev) < 5)
-		$hibak[] = "Rossz nevet adtál meg!";
-	if (!empty($mobil) && strlen($mobil) < 9)
-		$hibak[] = "Rossz mobil számot adtál meg!";
-	if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL))
-		$hibak[] = "Rossz e-mail címet adtál meg!";
+	} elseif (strlen($nev) < 5) {
+		$hibak[] = "A névnek legalább 5 karakter hosszúnak kell lennie!";
+	}
+	
+	if (!empty($mobil)) {
+		if (strlen($mobil) < 9) {
+			$hibak[] = "A mobil szám legalább 9 karakter hosszú kell legyen!";
+		} elseif (!preg_match("/^[0-9]{9,}$/", $mobil)) {
+			$hibak[] = "A mobil szám csak számokat tartalmazhat!";
+		}
+	}
+	
+	if (!empty($email)) {
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			$hibak[] = "Az e-mail cím formátuma érvénytelen!";
+		}
+	}
 
 	if ($_FILES['foto']['error'] == 0 && $_FILES['foto']['size'] > 2000000)
 		$hibak[] = "Túl nagy méretű képet töltöttél fel!";

@@ -2,7 +2,7 @@
 
 
 require("../kapcsolat.php");
-$kifejezes = (isset($_POST['kifejezes'])) ? $_POST['kifejezes'] : "";
+$kifejezes = $_POST['kifejezes'] ?? "";
 $cegnev = 'Invitel';
 $sql = "SELECT *
 		FROM nevjegyek 
