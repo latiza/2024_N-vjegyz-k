@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="hu" ng-app="contactsApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Névjegykártyák</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <link rel="stylesheet" href="../stilus.css">
+</head>
+<body ng-controller="ContactsController">
+<h1>Névjegykártyák</h1>
+
+<!-- Névjegyek listája -->
+<table>
+    <tr>
+        <th>Fotó</th>
+        <th>Név</th>
+        <th>Cégnév</th>
+        <th>Mobil</th>
+        <th>E-mail</th>
+        <th>Műveletek</th>
+    </tr>
+    <tr ng-repeat="contact in contacts">
+        <!-- Fotó megjelenítése az első oszlopban -->
+        <td><img ng-src="../kepek/{{contact.foto}}" alt="{{contact.nev}}" width="50"></td>
+        <td>{{contact.nev}}</td>
+        <td>{{contact.cegnev}}</td>
+        <td>{{contact.mobil}}</td>
+        <td>{{contact.email}}</td>
+        <td>
+            <!-- Módosításra irányít -->
+            <a href="RA-update-angular.html?id={{contact.id}}">Módosítás</a> |
+            <!-- Törlés funkció hívása AngularJS-en keresztül -->
+            <a href="" ng-click="deleteContact(contact.id)">Törlés</a>
+        </td>
+    </tr>
+</table>
+<a href="RA-angular-list.html">Vissza a lista oldalára</a>
+
+<!-- Sikerüzenet megjelenítése -->
+<p ng-if="successMessage" class="success">{{ successMessage }}</p>
+
+<!-- Hibaüzenet megjelenítése -->
+<p ng-if="errorMessage" class="error">{{ errorMessage }}</p>
+
+<script>
+    const app = angular.module('contactsApp', []);
+
+    app.controller('ContactsController', ['$scope', '$http', function($scope, $http) {
+        // Névjegyek betöltése az API-ról
+        $scope.loadContacts = function() {
+            $http.get('RA-get-contact.php').then(function(response) {
+                $scope.contacts = response.data;
+            }, function(error) {
+                console.error('Adatok betöltési hiba:', error);
+            });
+        };
+
+        // Névjegyek betöltése az oldal indításakor
+        $scope.loadContacts();
+
+        // Törlés funkció (GET metódus a RESTful API-hoz)
+        $scope.deleteContact = function(id) {
+            if (confirm("Biztosan törölni szeretnéd?")) {
+                $http({
+                    method: 'GET', // GET metódus használata az ID átadásához
+                    url: 'RA-delete-contact.php?id=' + id
+                }).then(function(response) {
+                    if (response.status === 200) {
+                        // Törlés után újra betöltjük az adatokat
+                        $scope.loadContacts();
+                        // Sikerüzenet megjelenítése
+                        $scope.successMessage = 'Névjegy sikeresen törölve!';
+                        $scope.errorMessage = null; // Töröljük a hibaüzenetet
+                    } else {
+                        $scope.errorMessage = 'Valami hiba történt a törlés során.';
+                        $scope.successMessage = null;
+                    }
+                }, function(error) {
+                    console.error('Törlési hiba:', error);
+                    $scope.errorMessage = 'Törlési hiba történt!';
+                    $scope.successMessage = null;
+                });
+            }
+        };
+    }]);
+</script>
+
+</body>
+</html>

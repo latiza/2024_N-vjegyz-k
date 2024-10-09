@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require("../kapcsolat.php");
 
     // Változók tisztítása és ellenőrzése
-    $nev    = strip_tags(ucwords(strtolower(trim($_POST['nev']))));
+    $nev    = htmlspecialchars(strip_tags(ucwords(strtolower(trim($_POST['nev'])))));
     $cegnev = strip_tags(trim($_POST['cegnev']));
     $mobil  = strip_tags(trim($_POST['mobil']));
     $email  = strip_tags(strtolower(trim($_POST['email'])));

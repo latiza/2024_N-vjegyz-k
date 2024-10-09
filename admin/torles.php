@@ -21,4 +21,4 @@ if (isset($_GET['id'])) {
 	mysqli_query($dbconn, $sql);
 }
 header("Location: lista.php");
-?>
+

@@ -12,7 +12,7 @@ Ha valki bejut ilyen módon, egy ilyet be tud juttatni, hogy OR 1 = 1; máris be
 if (isset($_POST['rendben'])) {
 	
 	// Változók tisztítása
-	require("../kapcsolat.php");
+	require"../kapcsolat.php";
 //sql szempontjából veszélyesnek tűnő sztringeket hatástalanítja
 	$email  = mysqli_real_escape_string($dbconn, strip_tags(strtolower(trim($_POST['email']))));
 	$jelszo = sha1($_POST['jelszo']);

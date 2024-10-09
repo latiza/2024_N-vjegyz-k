@@ -1,5 +1,5 @@
 <?php
-require("kapcsolat.php");
+require"kapcsolat.php";
 
 /* Beállítások */
 $sql = "SELECT *

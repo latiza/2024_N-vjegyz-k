@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="hu" ng-app="contactsApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Névjegy Módosítása</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <link rel="stylesheet" href="../stilus.css">
+</head>
+<body ng-controller="UpdateController">
+
+<h1>Névjegy Módosítása</h1>
+
+<!-- Névjegy frissítési űrlap -->
+<form ng-submit="updateContact()" enctype="multipart/form-data">
+    <!-- Név -->
+    <label>Név:</label>
+    <input type="text" ng-model="contact.nev" required><br>
+    
+    <!-- Cégnév -->
+    <label>Cégnév:</label>
+    <input type="text" ng-model="contact.cegnev"><br>
+    
+    <!-- Mobil -->
+    <label>Mobil:</label>
+    <input type="tel" ng-model="contact.mobil"><br>
+    
+    <!-- E-mail -->
+    <label>E-mail:</label>
+    <input type="email" ng-model="contact.email"><br>
+    
+    <!-- Jelenlegi fotó megjelenítése -->
+    <label>Jelenlegi fotó:</label><br>
+    <img ng-src="../kepek/{{contact.foto}}" alt="{{contact.nev}}" width="100"><br>
+    
+    <!-- Új fotó feltöltése -->
+    <label>Új fotó:</label>
+    <input type="file" file-model="contact.newFoto"><br>
+    
+    <button type="submit">Frissítés</button>
+</form>
+
+<!-- Üzenet megjelenítése -->
+<p ng-if="successMessage">{{ successMessage }}</p>
+
+<script>
+    const app = angular.module('contactsApp', []);
+
+    // Custom directive to handle file upload
+    app.directive('fileModel', ['$parse', function($parse) {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                const model = $parse(attrs.fileModel);
+                const modelSetter = model.assign;
+
+                element.bind('change', function() {
+                    scope.$apply(function() {
+                        modelSetter(scope, element[0].files[0]);
+                    });
+                });
+            }
+        };
+    }]);
+
+    app.controller('UpdateController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const contactId = urlParams.get('id');
+        console.log(contactId);
+        
+        // Kontakt adatainak betöltése
+        $http.get('RA-get-contact.php?id=' + contactId).then(function(response) {
+            $scope.contact = response.data;
+        }, function(error) {
+            console.error('Hiba a névjegy adatainak betöltésekor:', error);
+        });
+
+        // Névjegy frissítése
+        $scope.updateContact = function() {
+            const formData = new FormData();
+            formData.append('id', contactId);
+            formData.append('nev', $scope.contact.nev);
+            formData.append('cegnev', $scope.contact.cegnev);
+            formData.append('mobil', $scope.contact.mobil);
+            formData.append('email', $scope.contact.email);
+            
+            // Ha van új fotó, akkor hozzáadjuk
+            if ($scope.contact.newFoto) {
+                formData.append('foto', $scope.contact.newFoto);
+            }
+
+            $http({
+                method: 'POST',  // POST használata, mert fájlokat is küldünk
+                url: 'RA-put-contact.php',
+                data: formData,
+                headers: { 'Content-Type': undefined }, // multipart/form-data miatt undefined-re állítjuk
+            }).then(function(response) {
+                $scope.successMessage = response.data.message;
+                // Visszatérés a lista oldalra 2 másodperc múlva
+                setTimeout(function() {
+                    $window.location.href = 'RA-angular-list.html';
+                }, 2000);
+            }, function(error) {
+                console.error('Hiba történt a frissítés során:', error);
+            });
+        };
+    }]);
+</script>
+
+</body>
+</html>
