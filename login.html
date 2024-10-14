@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Belépés</title>
+    <link rel="stylesheet" href="../stilus.css">
+</head>
+<body>
+    <h1>Admin Belépés</h1>
+    <form id="login-form">
+        <p><label for="email">E-mail:</label><br>
+        <input type="email" id="email" name="email" required></p>
+
+        <p><label for="jelszo">Jelszó:</label><br>
+        <input type="password" id="jelszo" name="jelszo" required></p>
+
+        <button type="submit">Belépés</button>
+    </form>
+
+    <div id="hiba-uzenet"></div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Ne küldje el automatikusan az űrlapot
+
+            let email = document.getElementById('email').value.trim();
+            let jelszo = document.getElementById('jelszo').value.trim();
+
+            // Fetch API használata a bejelentkezéshez
+            fetch('login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    jelszo: jelszo
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'admin/dashboard.php'; // Átirányít a védett admin felületre
+                } else {
+                    document.getElementById('hiba-uzenet').innerHTML = data.error;
+                }
+            })
+            .catch(error => console.error('Hiba:', error));
+        });
+    </script>
+</body>
+</html>

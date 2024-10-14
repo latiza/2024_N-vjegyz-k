@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Névjegykártyák - Űrlap</title>
+    <link rel="stylesheet" href="../stilus.css">
+</head>
+<body>
+    <h1>Névjegykártyák</h1>
+    <form id="nevjegy-form" enctype="multipart/form-data">
+        <div id="hiba-uzenet"></div>
+        <input type="hidden" name="MAX_FILE_SIZE" value="2000000">
+        
+        <p><label for="foto">Fotó:</label><br>
+        <input type="file" id="foto" name="foto"></p>
+        
+        <p><label for="nev">Név*:</label><br>
+        <input type="text" id="nev" name="nev"></p>
+        
+        <p><label for="cegnev">Cégnév:</label><br>
+        <input type="text" id="cegnev" name="cegnev"></p>
+        
+        <p><label for="mobil">Mobil:</label><br>
+        <input type="tel" id="mobil" name="mobil"></p>
+        
+        <p><label for="email">E-mail:</label><br>
+        <input type="email" id="email" name="email"></p>
+        
+        <p><em>A *-gal jelölt mezők kitöltése kötelező!</em></p>
+        
+        <button type="submit">Küldés</button>
+        <button type="reset">Mégse</button>
+        
+        <p><a href="lista.php">Vissza a névjegyekhez</a></p>
+    </form>
+
+    <script>
+        document.getElementById('nevjegy-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Ne küldje el alapértelmezetten a formot
+
+            // Hibák összegyűjtése
+            let hibak = [];
+            let nev = document.getElementById('nev').value.trim();
+            let cegnev = document.getElementById('cegnev').value.trim();
+            let mobil = document.getElementById('mobil').value.trim();
+            let email = document.getElementById('email').value.trim();
+            let foto = document.getElementById('foto').files[0];
+
+            // Validáció
+            if (nev === "" || nev.length < 5) {
+                hibak.push("Nem adtál meg érvényes nevet!");
+            }
+            if (mobil !== "" && mobil.length < 9) {
+                hibak.push("Rossz mobil számot adtál meg!");
+            }
+            if (email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                hibak.push("Rossz e-mail címet adtál meg!");
+            }
+            if (foto && foto.size > 2000000) {
+                hibak.push("Túl nagy méretű képet töltöttél fel!");
+            }
+
+            // Ha vannak hibák, jelenítsük meg
+            if (hibak.length > 0) {
+                let hibaUzenet = "<ul>";
+                hibak.forEach(function(hiba) {
+                    hibaUzenet += "<li>" + hiba + "</li>";
+                });
+                hibaUzenet += "</ul>";
+                document.getElementById('hiba-uzenet').innerHTML = hibaUzenet;
+            } else {
+                // Adatok elküldése a backendnek fetch API-n keresztül
+                let formData = new FormData();
+                formData.append('nev', nev);
+                formData.append('cegnev', cegnev);
+                formData.append('mobil', mobil);
+                formData.append('email', email);
+                formData.append('foto', foto);
+
+                fetch('RA-create-contact.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        window.location.href = 'lista.php'; // Siker esetén átirányít
+                    } else if (data.errors) {
+                        let hibaUzenet = "<ul>";
+                        data.errors.forEach(function(hiba) {
+                            hibaUzenet += "<li>" + hiba + "</li>";
+                        });
+                        hibaUzenet += "</ul>";
+                        document.getElementById('hiba-uzenet').innerHTML = hibaUzenet;
+                    }
+                })
+                .catch(error => console.error('Hiba:', error));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -60,6 +60,7 @@
 
         // Törlés funkció (GET metódus a RESTful API-hoz)
         $scope.deleteContact = function(id) {
+            /*a confirm metódus felugró ablakot ad vissza egy üzenettel és egy ok gombbal*/ 
             if (confirm("Biztosan törölni szeretnéd?")) {
                 $http({
                     method: 'GET', // GET metódus használata az ID átadásához

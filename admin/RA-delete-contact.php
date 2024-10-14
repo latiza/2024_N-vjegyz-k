@@ -10,6 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
 
     // Névjegy törlése az adatbázisból
     $sql = "DELETE FROM nevjegyek WHERE id = ?";
+    /**
+     * @var $dbconn: Ez az objektum a már létező adatbázis kapcsolatot jelenti, amit a mysqli-vel hoztak létre (pl. egy mysqli_connect() hívással).
+     * @method prepare(): Ezzel a metódussal az SQL lekérdezést előkészítjük végrehajtásra, de még nem futtatjuk le. Ez növeli a biztonságot, mivel elkerüli az SQL injection támadásokat.
+     */
     $stmt = $dbconn->prepare($sql);
     $stmt->bind_param('i', $id);
 

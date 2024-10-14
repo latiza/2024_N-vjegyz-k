@@ -1,4 +1,11 @@
 <?php
+
+session_start();
+if (!isset($_SESSION['belepett'])) { 
+	header("Location: false.html"); // azaz ide
+	exit();
+}
+
 require "../kapcsolat.php"; // Kapcsolódás az adatbázishoz
 
 // UTF-8 karakterkódolás biztosítása
